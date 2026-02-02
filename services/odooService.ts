@@ -5,14 +5,18 @@ import { LOGO_URL, ODOO_CONFIG } from '../constants';
 
 export const getCompanyConfig = async (): Promise<CompanyConfig> => {
   try {
-    const { data, error } = await supabase.from('settings').select('*').single();
+    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
     if (error) throw error;
     return {
       logo_url: data.logo_url || LOGO_URL,
       whatsapp_number: data.whatsapp_number || ODOO_CONFIG.whatsappNumber,
       company_name: data.company_name || ODOO_CONFIG.company,
-      facebook_url: data.facebook_url,
-      instagram_url: data.instagram_url,
+      facebook_url: data.facebook_url || '',
+      instagram_url: data.instagram_url || '',
+      odoo_host: data.odoo_host || ODOO_CONFIG.host,
+      odoo_db: data.odoo_db || ODOO_CONFIG.db,
+      odoo_username: data.odoo_username || ODOO_CONFIG.username,
+      odoo_api_key: data.odoo_api_key || ODOO_CONFIG.apiKey,
       banners: data.banners || [{
         image_url: 'https://media.mifarma.com.pe/media/promotions/banner/Mifarma_Banner_Desktop_Mifa25_20240120.jpg',
         title: 'DONDE TU BIENESTAR ES PRIORIDAD',
@@ -21,6 +25,7 @@ export const getCompanyConfig = async (): Promise<CompanyConfig> => {
       }]
     };
   } catch (error) {
+    console.warn("Usando configuración por defecto:", error);
     return {
       logo_url: LOGO_URL,
       whatsapp_number: ODOO_CONFIG.whatsappNumber,
@@ -71,11 +76,9 @@ export const createFullOrder = async (formData: OrderFormData, cart: CartItem[])
 
     const itemsToInsert = cart.map(item => ({
       order_id: order.id,
-      product_id: item.id,
       product_name: item.name,
       quantity: item.quantity,
-      price: item.price,
-      presentation: item.selectedPresentation || 'Unidad'
+      price: item.price
     }));
 
     const { error: itemsError } = await supabase.from('order_items').insert(itemsToInsert);
@@ -83,8 +86,7 @@ export const createFullOrder = async (formData: OrderFormData, cart: CartItem[])
 
     return { 
       success: true, 
-      supabase_id: order.id,
-      odoo_id: Math.floor(Math.random() * 9000) + 1000 
+      supabase_id: order.id
     };
   } catch (error) {
     throw error;
@@ -112,6 +114,3 @@ export const getProductsFromCache = async (): Promise<Product[]> => {
     return [];
   }
 };
-
-export const createOdooOrder = createFullOrder;
-export const getProductsFromOdoo = getProductsFromCache;

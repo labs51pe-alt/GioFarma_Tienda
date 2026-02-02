@@ -246,14 +246,14 @@ const App: React.FC = () => {
               </p>
               <div className="flex gap-4">
                 <a 
-                  href={config?.facebook_url || "https://facebook.com"} 
+                  href={config?.facebook_url || "#"} 
                   target="_blank" 
                   className="w-11 h-11 rounded-2xl bg-[#f1f4f8] text-[#1a2b49] flex items-center justify-center hover:bg-[#e1127a] hover:text-white transition-all shadow-sm"
                 >
                   <i className="fab fa-facebook-f text-lg"></i>
                 </a>
                 <a 
-                  href={config?.instagram_url || "https://instagram.com"} 
+                  href={config?.instagram_url || "#"} 
                   target="_blank" 
                   className="w-11 h-11 rounded-2xl bg-[#f1f4f8] text-[#1a2b49] flex items-center justify-center hover:bg-[#e1127a] hover:text-white transition-all shadow-sm"
                 >
